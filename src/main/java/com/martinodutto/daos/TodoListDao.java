@@ -1,8 +1,11 @@
 package com.martinodutto.daos;
 
+import com.martinodutto.dtos.Note;
 import com.martinodutto.exceptions.PersistenceException;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public interface TodoListDao {
 
@@ -19,5 +22,9 @@ public interface TodoListDao {
 
     void addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException;
 
-    Long getNextNoteId(Long chatId) throws PersistenceException, SQLException;
+    @NotNull List<Note> readTodoList(Long chatId) throws PersistenceException, SQLException;
+
+    void deleteTodoList(Long chatId) throws PersistenceException, SQLException;
+
+    void editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException;
 }

@@ -46,11 +46,10 @@ public class App implements CommandLineRunner {
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         BotSession session = telegramBotsApi.registerBot(todoListBot);
-        todoListBot.setSession(session);
         if (!session.isRunning()) {
             session.start();
         }
-        logger.debug("Session started!");
+        logger.info("Session started!");
     }
 
     public void configureDatabase() throws SQLException {

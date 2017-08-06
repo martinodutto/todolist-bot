@@ -2,16 +2,20 @@ package com.martinodutto.components;
 
 import com.martinodutto.daos.TodoListDao;
 import com.martinodutto.exceptions.PersistenceException;
+import com.martinodutto.services.CommandHandler;
 import com.martinodutto.services.PropertiesManager;
+import com.martinodutto.services.UserMessageHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.generics.BotSession;
 
 import javax.annotation.PostConstruct;
 import java.sql.SQLException;
@@ -21,16 +25,20 @@ public class TodoListBot extends TelegramLongPollingBot {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
-    private BotSession session;
-
     private PropertiesManager propertiesManager;
 
     private TodoListDao todoListDao;
 
+    private CommandHandler commandHandler;
+
+    private UserMessageHandler userMessageHandler;
+
     @Autowired
-    public TodoListBot(PropertiesManager propertiesManager, TodoListDao todoListDao) {
+    public TodoListBot(PropertiesManager propertiesManager, TodoListDao todoListDao, CommandHandler commandHandler, UserMessageHandler userMessageHandler) {
         this.propertiesManager = propertiesManager;
         this.todoListDao = todoListDao;
+        this.commandHandler = commandHandler;
+        this.userMessageHandler = userMessageHandler;
     }
 
     @PostConstruct
@@ -41,33 +49,32 @@ public class TodoListBot extends TelegramLongPollingBot {
                 todoListDao.vacuum();
             }
             logger.debug("Tables correctly initialized");
-        } catch (SQLException | PersistenceException e) {
+        } catch (@NotNull SQLException | PersistenceException e) {
             logger.fatal("The bot cannot be initialized: database problem", e);
             throw e;
         }
-
-//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//            logger.debug("Shutting down bot...");
-//            session.stop();
-//        }));
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void onUpdateReceived(@Nullable Update update) {
         String message = null;
         Long chatId = null;
+        Message inputMsg;
 
         logger.debug("Update received: {}", update);
 
-        if (update != null && update.hasMessage()) {
-            chatId = update.getMessage().getChatId();
-            if (update.getMessage().getText() != null) {
-                try {
-                    todoListDao.addNote(update.getMessage().getText(), chatId, todoListDao.getNextNoteId(chatId));
-                    message = "Great! Your note has been saved to my infallible memory ;)";
-                } catch (PersistenceException | SQLException e) {
-                    logger.error("An error occurred while saving the note to the database", e);
-                    message = "Sorry, it seems there has been an internal error :(";
+        if (update != null && (update.hasMessage() || update.hasEditedMessage())) {
+            inputMsg = (update.hasMessage() ? update.getMessage() : update.getEditedMessage());
+            chatId = inputMsg.getChatId();
+            if (inputMsg.getText() != null) {
+                if (inputMsg.isUserMessage()) {
+                    if (inputMsg.isCommand()) {
+                        message = (update.hasMessage() ? commandHandler.handleMessage(update) : commandHandler.handleEditedMessage(update));
+                    } else {
+                        message = (update.hasMessage() ? userMessageHandler.handleMessage(update) : userMessageHandler.handleEditedMessage(update));
+                    }
+                } else {
+                    message = "Sorry, I don't recognize your input as an instruction!";
                 }
             } else {
                 message = "Sorry, but you didn't send me any note!";
@@ -80,7 +87,7 @@ public class TodoListBot extends TelegramLongPollingBot {
         try {
             sendMessage(reply);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error("An error occurred while send the reply message", e);
         }
     }
 
@@ -92,9 +99,5 @@ public class TodoListBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return propertiesManager.getProperty("bot.token");
-    }
-
-    public void setSession(BotSession session) {
-        this.session = session;
     }
 }

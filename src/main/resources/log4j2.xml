@@ -3,14 +3,14 @@
 
     <Appenders>
         <RollingFile name="file" fileName="logs/botlog.log" filePattern="logs/botlog-%d{yyyy-MM-dd}.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS}|%-5p|%c{1}: %m%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p : %m%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
         </RollingFile>
 
         <Console name="stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS}|%-5p|%c{1}: %m%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p : %m%n"/>
         </Console>
     </Appenders>
 

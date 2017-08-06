@@ -1,5 +1,6 @@
 package com.martinodutto.services;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class PropertiesManager {
         }
     }
 
-    public String getProperty(String name) {
+    public String getProperty(@NotNull String name) {
         return properties.getProperty(name);
     }
 }
