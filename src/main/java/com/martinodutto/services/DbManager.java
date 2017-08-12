@@ -3,6 +3,8 @@ package com.martinodutto.services;
 import com.martinodutto.exceptions.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,9 +17,15 @@ import java.sql.SQLException;
 @Singleton
 public class DbManager {
 
-    private static final String DB_NAME = "todo-list-bot.db";
+    private final String dbName;
 
     private final Logger logger = LogManager.getLogger(this.getClass());
+
+    @Autowired
+    public DbManager(@Value("${db.name}") String dbName) {
+        this.dbName = dbName;
+        logger.debug("Using database: {}", dbName);
+    }
 
     /**
      * The unique connection to be used throughout all the application.
@@ -27,7 +35,7 @@ public class DbManager {
     @PostConstruct
     public void init() throws SQLException {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + DB_NAME);
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
         } catch (SQLException se) {
             logger.fatal("An error occurred while initializing the database manager", se);
             throw se;
@@ -41,6 +49,11 @@ public class DbManager {
         return connection;
     }
 
+    /**
+     * Safely terminates the database manager, allowing the persistence layer to be shutdown properly.
+     *
+     * @throws SQLException Error while terminating the database manager.
+     */
     public void terminate() throws SQLException {
         if (connection != null) {
             connection.close();

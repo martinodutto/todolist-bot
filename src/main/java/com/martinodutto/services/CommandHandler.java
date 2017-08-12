@@ -2,10 +2,10 @@ package com.martinodutto.services;
 
 import com.martinodutto.daos.TodoListDao;
 import com.martinodutto.dtos.Note;
-import com.martinodutto.enums.Commands;
 import com.martinodutto.exceptions.PersistenceException;
 import com.martinodutto.exceptions.UnknownCommandException;
-import com.sun.istack.internal.NotNull;
+import com.martinodutto.types.Command;
+import com.martinodutto.utils.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -29,11 +29,13 @@ public class CommandHandler implements InputHandler {
     @Nullable
     @Override
     public String handleMessage(@org.jetbrains.annotations.NotNull Update update) {
-        String response = null;
+        String response;
         Message message = update.getMessage();
 
+        Command c;
         try {
-            switch (getCommand(message)) {
+            c = getCommand(message);
+            switch (c.getKindOf()) {
                 case START_ME_UP: {
                     response = "Hi! I'm a todo-list bot. You can send me new todo-entries by simply entering a message. To edit your to-do list, just use any of my supported commands (start typing '/' to see them, or use the command '/help')";
                     break;
@@ -61,6 +63,23 @@ public class CommandHandler implements InputHandler {
                     }
                     break;
                 }
+                case EDIT: {
+                    try {
+                        if (c.validateParameters()) {
+                            if (todoListDao.editNote(c.getParameters().get(1), message.getChatId(), todoListDao.getIdFromNumber(Long.parseLong(c.getParameters().get(0)), message.getChatId())) > 0) {
+                                response = "Great! Your note has been updated";
+                            } else {
+                                response = "Nothing to update";
+                            }
+                        } else {
+                            response = "Wrong number or type of the parameters: you must enter a command like /edit 2 \"My fancy new idea\"";
+                        }
+                    } catch (PersistenceException | SQLException e) {
+                        logger.error("Error while updating the note", e);
+                        response = "Error while updating the note";
+                    }
+                    break;
+                }
                 default: {
                     response = "This should never happen!";
                 }
@@ -78,13 +97,16 @@ public class CommandHandler implements InputHandler {
         return "Sorry but I can't edit any previously issued command";
     }
 
-    private Commands getCommand(@org.jetbrains.annotations.NotNull @NotNull Message message) throws UnknownCommandException {
-        Commands command;
+    private Command getCommand(@org.jetbrains.annotations.NotNull Message message) throws UnknownCommandException {
+        Command command = null;
 
-        if (message.getText().length() > 1) {
-            command = Commands.getFromInstruction(message.getText().substring(1));
-            if (command == null) {
-                throw new UnknownCommandException();
+        if (message.getText().startsWith("/") && message.getText().length() > 1) {
+            final String[] strings = StringTokenizer.translateCommandline(message.getText().substring(1));
+            if (strings.length > 0) {
+                command = new Command(strings[0]);
+                for (int j = 1; j < strings.length; j++) {
+                    command.addParameter(strings[j]);
+                }
             }
         } else {
             throw new UnknownCommandException();

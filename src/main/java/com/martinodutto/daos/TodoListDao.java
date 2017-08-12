@@ -20,11 +20,17 @@ public interface TodoListDao {
      */
     void vacuum() throws SQLException, PersistenceException;
 
-    void addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException;
+    int addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException;
+
+    int addNote(Note note) throws PersistenceException, SQLException;
 
     @NotNull List<Note> readTodoList(Long chatId) throws PersistenceException, SQLException;
 
-    void deleteTodoList(Long chatId) throws PersistenceException, SQLException;
+    int deleteTodoList(Long chatId) throws PersistenceException, SQLException;
 
-    void editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException;
+    int editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException;
+
+    int editNote(Note note) throws PersistenceException, SQLException;
+
+    Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException;
 }

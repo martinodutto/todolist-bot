@@ -5,6 +5,7 @@ import com.martinodutto.daos.TodoListDao;
 import com.martinodutto.dtos.Note;
 import com.martinodutto.exceptions.PersistenceException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Singleton;
@@ -50,17 +51,30 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public void addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException {
+    public int addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("INSERT INTO todolist_table (noteid, chatid, idea) VALUES (?, ?, ?)")) {
-            int idx = 1;
-            statement.setLong(idx++, noteId);
-            statement.setLong(idx++, chatId);
-            statement.setString(idx++, message);
+            int res;
+            if (chatId != null && noteId != null) {
+                int idx = 1;
+                statement.setLong(idx++, noteId);
+                statement.setLong(idx++, chatId);
+                statement.setString(idx++, message);
 
-            statement.execute();
+                res = statement.executeUpdate();
 
-            logger.debug("Persisted new note with id = {} for chat id = {}", noteId, chatId);
+                logger.debug("Persisted new note with id = {} for chat id = {}", noteId, chatId);
+            } else {
+                res = 0;
+                logger.warn("No new note to add with id = {} for chat id = {}", noteId, chatId);
+            }
+
+            return res;
         }
+    }
+
+    @Override
+    public int addNote(Note note) throws PersistenceException, SQLException {
+        return addNote(note.getIdea(), note.getChatId(), note.getNoteId());
     }
 
     @NotNull
@@ -83,27 +97,55 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public void deleteTodoList(Long chatId) throws PersistenceException, SQLException {
+    public int deleteTodoList(Long chatId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("DELETE FROM todolist_table WHERE chatid = ?")) {
             statement.setLong(1, chatId);
 
-            statement.execute();
+            logger.debug("Deleting todo-list for chat id = {}", chatId);
 
-            logger.debug("Deleted todo-list for chat id = {}", chatId);
+            return statement.executeUpdate();
         }
     }
 
     @Override
-    public void editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException {
+    public int editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("UPDATE todolist_table SET idea = ? WHERE chatid = ? AND noteid = ?")) {
-            int idx = 1;
-            statement.setString(idx++, editedMessage);
-            statement.setLong(idx++, chatId);
-            statement.setLong(idx++, noteId);
+            int res;
+            if (chatId != null && noteId != null) {
+                int idx = 1;
+                statement.setString(idx++, editedMessage);
+                statement.setLong(idx++, chatId);
+                statement.setLong(idx++, noteId);
 
-            statement.execute();
+                res = statement.executeUpdate();
 
-            logger.debug("Updated todo-list for chat id = {} and note id = {}", chatId, noteId);
+                logger.debug("Updated todo-list for chat id = {} and note id = {}", chatId, noteId);
+            } else {
+                res = 0;
+                logger.debug("Nothing to update for chat id = {} and note id = {}", chatId, noteId);
+            }
+            return res;
+        }
+    }
+
+    @Override
+    public int editNote(Note note) throws PersistenceException, SQLException {
+        return editNote(note.getIdea(), note.getChatId(), note.getNoteId());
+    }
+
+    @Override
+    public @Nullable Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException {
+        Long noteId = null;
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement("SELECT noteid FROM (SELECT n.noteid, (SELECT SUM(1) FROM todolist_table WHERE noteid <= n.noteid) as ROWNUM FROM todolist_table n WHERE n.chatid = ? ORDER BY n.noteid ASC) WHERE ROWNUM = ?")) {
+            statement.setLong(1, chatId);
+            statement.setLong(2, noteNumber);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    noteId = rs.getLong(1);
+                }
+            }
+
+            return noteId;
         }
     }
 }

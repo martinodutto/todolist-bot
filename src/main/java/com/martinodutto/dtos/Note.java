@@ -49,4 +49,24 @@ public class Note {
                 ", idea='" + idea + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Note note = (Note) o;
+
+        if (chatId != null ? !chatId.equals(note.chatId) : note.chatId != null) return false;
+        if (noteId != null ? !noteId.equals(note.noteId) : note.noteId != null) return false;
+        return idea != null ? idea.equals(note.idea) : note.idea == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = chatId != null ? chatId.hashCode() : 0;
+        result = 31 * result + (noteId != null ? noteId.hashCode() : 0);
+        result = 31 * result + (idea != null ? idea.hashCode() : 0);
+        return result;
+    }
 }

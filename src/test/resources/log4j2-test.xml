@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+
+    <Appenders>
+        <RollingFile name="file" fileName="logs/botlog-test.log" filePattern="logs/botlog-test-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p : %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p : %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.martinodutto" level="DEBUG" additivity="true">
+            <appender-ref ref="file"/>
+        </Logger>
+        <Root level="INFO" additivity="false">
+            <appender-ref ref="stdout"/>
+        </Root>
+    </Loggers>
+</Configuration>
