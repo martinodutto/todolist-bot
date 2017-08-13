@@ -70,7 +70,7 @@ public class CommandHandler implements InputHandler {
                     try {
                         if (c.validateParameters()) {
                             if (todoListDao.editNote(c.getParameters().get(1), message.getChatId(), todoListDao.getIdFromNumber(Long.parseLong(c.getParameters().get(0)), message.getChatId())) > 0) {
-                                response = I18nSupport.i18nize("note.successfully.updated");
+                                response = I18nSupport.i18nize("note.updated");
                             } else {
                                 response = I18nSupport.i18nize("nothing.to.update");
                             }
