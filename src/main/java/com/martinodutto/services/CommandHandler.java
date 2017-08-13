@@ -37,11 +37,11 @@ public class CommandHandler implements InputHandler {
             c = getCommand(message);
             switch (c.getKindOf()) {
                 case START_ME_UP: {
-                    response = "Hi! I'm a todo-list bot. You can send me new todo-entries by simply entering a message. To edit your to-do list, just use any of my supported commands (start typing '/' to see them, or use the command '/help')";
+                    response = I18nSupport.i18nize("start.me.up");
                     break;
                 }
                 case HELP: {
-                    response = "Help section. Work in progress!"; // TODO
+                    response = I18nSupport.i18nize("help.section"); // TODO
                     break;
                 }
                 case READ_LIST: {
@@ -49,17 +49,17 @@ public class CommandHandler implements InputHandler {
                         response = getNotesList(message.getChatId());
                     } catch (@org.jetbrains.annotations.NotNull SQLException | PersistenceException e) {
                         logger.error("Error while getting the todo list", e);
-                        response = "Error while getting the list";
+                        response = I18nSupport.i18nize("error.reading.list");
                     }
                     break;
                 }
                 case DELETE: {
                     try {
                         todoListDao.deleteTodoList(message.getChatId());
-                        response = "Todo list successfully deleted. Feel free to start a new one!";
+                        response = I18nSupport.i18nize("todo.list.successfully.deleted");
                     } catch (@org.jetbrains.annotations.NotNull PersistenceException | SQLException e) {
                         logger.error("Error while getting the notes list", e);
-                        response = "Error while deleting the list";
+                        response = I18nSupport.i18nize("error.deleting.list");
                     }
                     break;
                 }
@@ -67,25 +67,25 @@ public class CommandHandler implements InputHandler {
                     try {
                         if (c.validateParameters()) {
                             if (todoListDao.editNote(c.getParameters().get(1), message.getChatId(), todoListDao.getIdFromNumber(Long.parseLong(c.getParameters().get(0)), message.getChatId())) > 0) {
-                                response = "Great! Your note has been updated";
+                                response = I18nSupport.i18nize("note.successfully.updated");
                             } else {
-                                response = "Nothing to update";
+                                response = I18nSupport.i18nize("nothing.to.update");
                             }
                         } else {
-                            response = "Wrong number or type of the parameters: you must enter a command like /edit 2 \"My fancy new idea\"";
+                            response = I18nSupport.i18nize("wrong.parameters");
                         }
                     } catch (PersistenceException | SQLException e) {
                         logger.error("Error while updating the note", e);
-                        response = "Error while updating the note";
+                        response = I18nSupport.i18nize("error.updating.note");
                     }
                     break;
                 }
                 default: {
-                    response = "This should never happen!";
+                    response = I18nSupport.i18nize("this.should.never.happen");
                 }
             }
         } catch (UnknownCommandException uce) {
-            response = "I'm sorry, I don't recognize this instruction";
+            response = I18nSupport.i18nize("unrecognized.instruction");
         }
 
         return response;
@@ -94,7 +94,7 @@ public class CommandHandler implements InputHandler {
     @org.jetbrains.annotations.NotNull
     @Override
     public String handleEditedMessage(Update update) {
-        return "Sorry but I can't edit any previously issued command";
+        return I18nSupport.i18nize("cannot.edit.command");
     }
 
     private Command getCommand(@org.jetbrains.annotations.NotNull Message message) throws UnknownCommandException {
@@ -123,7 +123,7 @@ public class CommandHandler implements InputHandler {
         }
 
         if (sb.length() == 0) {
-            sb.append("Todo list empty. Simply send me a message to add your first note");
+            sb.append(I18nSupport.i18nize("todo.list.empty"));
         }
 
         logger.debug("Notes list for chat id {}: {}", chatId, sb.toString());

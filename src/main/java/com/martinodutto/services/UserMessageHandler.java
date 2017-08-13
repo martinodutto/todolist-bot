@@ -31,10 +31,10 @@ public class UserMessageHandler implements InputHandler {
         try {
             Message msg = update.getMessage();
             todoListDao.addNote(msg.getText(), msg.getChatId(), msg.getMessageId().longValue());
-            message = "Great! Your note has been saved";
+            message = I18nSupport.i18nize("note.saved");
         } catch (@NotNull PersistenceException | SQLException e) {
             logger.error("An error occurred while saving the note to the database", e);
-            message = "Sorry, it seems there has been an internal error :(";
+            message = I18nSupport.i18nize("internal.error");
         }
 
         return message;
@@ -47,10 +47,10 @@ public class UserMessageHandler implements InputHandler {
         try {
             Message msg = update.getEditedMessage();
             todoListDao.editNote(msg.getText(), msg.getChatId(), msg.getMessageId().longValue());
-            message = "Great! Your note has been updated";
+            message = I18nSupport.i18nize("note.updated");
         } catch (@NotNull PersistenceException | SQLException e) {
             logger.error("An error occurred while updating the note to the database", e);
-            message = "Sorry, it seems there has been an internal error :(";
+            message = I18nSupport.i18nize("internal.error");
         }
 
         return message;

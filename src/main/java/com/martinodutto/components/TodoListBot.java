@@ -3,6 +3,7 @@ package com.martinodutto.components;
 import com.martinodutto.daos.TodoListDao;
 import com.martinodutto.exceptions.PersistenceException;
 import com.martinodutto.services.CommandHandler;
+import com.martinodutto.services.I18nSupport;
 import com.martinodutto.services.PropertiesManager;
 import com.martinodutto.services.UserMessageHandler;
 import org.apache.logging.log4j.LogManager;
@@ -74,10 +75,10 @@ public class TodoListBot extends TelegramLongPollingBot {
                         message = (update.hasMessage() ? userMessageHandler.handleMessage(update) : userMessageHandler.handleEditedMessage(update));
                     }
                 } else {
-                    message = "Sorry, I don't recognize your input as an instruction!";
+                    message = I18nSupport.i18nize("unrecognized.input");
                 }
             } else {
-                message = "Sorry, but you didn't send me any note!";
+                message = I18nSupport.i18nize("no.message.received");
             }
         }
 
