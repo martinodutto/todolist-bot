@@ -53,12 +53,6 @@ public class App implements CommandLineRunner {
     }
 
     public void configureDatabase() throws SQLException {
-        try {
-            dbManager.init();
-        } catch (SQLException se) {
-            logger.fatal("An error occurred while initializing the database manager", se);
-            throw se;
-        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.debug("Shutting down main application...");

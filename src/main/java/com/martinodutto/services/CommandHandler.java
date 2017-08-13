@@ -15,6 +15,9 @@ import org.telegram.telegrambots.api.objects.Update;
 
 import java.sql.SQLException;
 
+/**
+ * Handles user command inputs.
+ */
 @Service
 public class CommandHandler implements InputHandler {
 

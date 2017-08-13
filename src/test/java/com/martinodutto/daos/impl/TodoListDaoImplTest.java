@@ -34,7 +34,6 @@ public class TodoListDaoImplTest {
 
     @Before
     public void setUp() throws Exception {
-        dbManager.init();
         dbManager.getConnection().setAutoCommit(false);
         if (!todoListDao.tablesAlreadyCreated()) {
             todoListDao.createTables();

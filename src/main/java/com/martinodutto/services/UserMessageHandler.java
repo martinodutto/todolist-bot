@@ -12,6 +12,9 @@ import org.telegram.telegrambots.api.objects.Update;
 
 import java.sql.SQLException;
 
+/**
+ * Handles "normal" user inputs, i.e. inputs that are not commands.
+ */
 @Service
 public class UserMessageHandler implements InputHandler {
 

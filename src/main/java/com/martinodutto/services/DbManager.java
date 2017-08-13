@@ -13,6 +13,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * High-level manager of the database connections.
+ */
 @Service
 @Singleton
 public class DbManager {
@@ -33,7 +36,7 @@ public class DbManager {
     private static Connection connection;
 
     @PostConstruct
-    public void init() throws SQLException {
+    private void init() throws SQLException {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
         } catch (SQLException se) {
@@ -42,6 +45,12 @@ public class DbManager {
         }
     }
 
+    /**
+     * Gets THE connection used anywhere by the application.
+     *
+     * @return Database connection.
+     * @throws PersistenceException Database manager not initialized.
+     */
     public Connection getConnection() throws PersistenceException {
         if (connection == null) {
             throw new PersistenceException("Database manager never initialized");
@@ -54,7 +63,9 @@ public class DbManager {
      *
      * @throws SQLException Error while terminating the database manager.
      */
+//    @PreDestroy
     public void terminate() throws SQLException {
+        logger.debug("Safely closing database connection...");
         if (connection != null) {
             connection.close();
         }
