@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -63,9 +64,9 @@ public class DbManager {
      *
      * @throws SQLException Error while terminating the database manager.
      */
-//    @PreDestroy
+    @PreDestroy
     public void terminate() throws SQLException {
-        logger.debug("Safely closing database connection...");
+        System.out.println("Safely closing database connection...");
         if (connection != null) {
             connection.close();
         }

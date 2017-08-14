@@ -12,8 +12,6 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.generics.BotSession;
 
-import java.sql.SQLException;
-
 /**
  * Main class.
  */
@@ -42,7 +40,6 @@ public class App implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        configureDatabase();
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         BotSession session = telegramBotsApi.registerBot(todoListBot);
@@ -50,17 +47,5 @@ public class App implements CommandLineRunner {
             session.start();
         }
         logger.info("Session started!");
-    }
-
-    public void configureDatabase() throws SQLException {
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.debug("Shutting down main application...");
-            try {
-                dbManager.terminate();
-            } catch (SQLException se) {
-                logger.error("An error occurred while shutting down the database manager", se);
-            }
-        }));
     }
 }
