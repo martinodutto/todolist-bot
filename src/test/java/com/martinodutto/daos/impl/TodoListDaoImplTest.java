@@ -43,7 +43,6 @@ public class TodoListDaoImplTest {
     @After
     public void tearDown() throws Exception {
         dbManager.getConnection().rollback();
-        dbManager.terminate();
     }
 
     @Test
