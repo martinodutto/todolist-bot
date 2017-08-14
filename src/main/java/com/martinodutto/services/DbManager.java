@@ -65,7 +65,7 @@ public class DbManager {
      * @throws SQLException Error while terminating the database manager.
      */
     @PreDestroy
-    public void terminate() throws SQLException {
+    private void terminate() throws SQLException {
         System.out.println("Safely closing database connection...");
         if (connection != null) {
             connection.close();
