@@ -33,5 +33,9 @@ public interface TodoListDao {
 
     int editNote(Note note) throws PersistenceException, SQLException;
 
+    int deleteNote(Long chatId, Long noteId) throws PersistenceException, SQLException;
+
+    int deleteNote(Note note) throws PersistenceException, SQLException;
+
     @Nullable Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException;
 }

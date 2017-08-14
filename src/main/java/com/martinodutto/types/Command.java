@@ -40,7 +40,8 @@ public class Command {
         HELP("help"),
         READ_LIST("read"),
         DELETE("delete"),
-        EDIT("edit");
+        EDIT("edit"),
+        DONE("done");
 
         private String instruction;
 
@@ -78,6 +79,21 @@ public class Command {
                 final List<String> parameters = getParameters();
 
                 valid &= (parameters.size() == 2);
+
+                if (valid) {
+                    try {
+                        Long.parseLong(parameters.get(0));
+                    } catch (NumberFormatException nfe) {
+                        valid &= false;
+                    }
+                }
+
+                break;
+            }
+            case DONE: {
+                final List<String> parameters = getParameters();
+
+                valid &= (parameters.size() == 1);
 
                 if (valid) {
                     try {

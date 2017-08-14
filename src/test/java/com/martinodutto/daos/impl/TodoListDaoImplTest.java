@@ -102,6 +102,32 @@ public class TodoListDaoImplTest {
     }
 
     @Test
+    public void deleteNoteTest() throws Exception {
+        final Long chatId = 143L;
+        final List<Note> notes = populateTestChat(chatId);
+
+        final Note note = notes.get(1);
+
+        todoListDao.deleteNote(note);
+
+        final List<Note> postEditNotes = todoListDao.readTodoList(chatId);
+
+        assertEquals("Delete note test", notes.size() - 1, postEditNotes.size());
+    }
+
+    @Test
+    public void deleteNoteNullTest() throws Exception {
+        final Long chatId = 143L;
+        final List<Note> notes = populateTestChat(chatId);
+
+        final Note note = notes.get(1);
+
+        note.setChatId(null);
+
+        assertEquals("Test behaviour in case of invalid primary key", 0, todoListDao.deleteNote(note));
+    }
+
+    @Test
     public void getIdFromNumberTest() throws Exception {
         Long chatId = 101L;
         populateTestChat(chatId);

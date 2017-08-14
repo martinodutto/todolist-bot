@@ -67,6 +67,23 @@ public class CommandHandler implements InputHandler {
                     }
                     break;
                 }
+                case DONE: {
+                    try {
+                        if (c.validateParameters()) {
+                            if (todoListDao.deleteNote(message.getChatId(), todoListDao.getIdFromNumber(Long.parseLong(c.getParameters().get(0)), message.getChatId())) > 0) {
+                                response = I18nSupport.i18nize("note.deleted");
+                            } else {
+                                response = I18nSupport.i18nize("nothing.to.delete");
+                            }
+                        } else {
+                            response = I18nSupport.i18nize("wrong.delete.parameters");
+                        }
+                    } catch (@NotNull PersistenceException | SQLException e) {
+                        logger.error("Error while deleting the note", e);
+                        response = I18nSupport.i18nize("error.deleting.note");
+                    }
+                    break;
+                }
                 case EDIT: {
                     try {
                         if (c.validateParameters()) {
@@ -76,7 +93,7 @@ public class CommandHandler implements InputHandler {
                                 response = I18nSupport.i18nize("nothing.to.update");
                             }
                         } else {
-                            response = I18nSupport.i18nize("wrong.parameters");
+                            response = I18nSupport.i18nize("wrong.edit.parameters");
                         }
                     } catch (@NotNull PersistenceException | SQLException e) {
                         logger.error("Error while updating the note", e);

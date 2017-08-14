@@ -134,6 +134,31 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
+    public int deleteNote(Long chatId, Long noteId) throws PersistenceException, SQLException {
+        try (PreparedStatement statement = dbManager.getConnection().prepareStatement("DELETE FROM todolist_table WHERE chatid = ? AND noteid = ?")) {
+            int res;
+            if (chatId != null && noteId != null) {
+                int idx = 1;
+                statement.setLong(idx++, chatId);
+                statement.setLong(idx++, noteId);
+
+                res = statement.executeUpdate();
+
+                logger.debug("Deleted note for chat id = {} and note id = {}", chatId, noteId);
+            } else {
+                res = 0;
+                logger.debug("Nothing to delete for chat id = {} and note id = {}", chatId, noteId);
+            }
+            return res;
+        }
+    }
+
+    @Override
+    public int deleteNote(Note note) throws PersistenceException, SQLException {
+        return deleteNote(note.getChatId(), note.getNoteId());
+    }
+
+    @Override
     public @Nullable Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException {
         Long noteId = null;
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("SELECT noteid FROM (SELECT n.noteid, (SELECT SUM(1) FROM todolist_table WHERE noteid <= n.noteid) as ROWNUM FROM todolist_table n WHERE n.chatid = ? ORDER BY n.noteid ASC) WHERE ROWNUM = ?")) {
