@@ -6,6 +6,7 @@ import com.martinodutto.exceptions.PersistenceException;
 import com.martinodutto.services.DbManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -124,6 +125,7 @@ public class TodoListDaoImplTest {
         assertEquals("Exceptional use case: empty chat", null, todoListDao.getIdFromNumber(2, 102L));
     }
 
+    @NotNull
     private List<Note> populateTestChat(Long chatId) throws SQLException, PersistenceException {
         final List<Note> notes = new ArrayList<>();
 

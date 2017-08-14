@@ -51,7 +51,7 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int addNote(String message, Long chatId, Long noteId) throws PersistenceException, SQLException {
+    public int addNote(String message, @Nullable Long chatId, @Nullable Long noteId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("INSERT INTO todolist_table (noteid, chatid, idea) VALUES (?, ?, ?)")) {
             int res;
             if (chatId != null && noteId != null) {
@@ -73,7 +73,7 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int addNote(Note note) throws PersistenceException, SQLException {
+    public int addNote(@NotNull Note note) throws PersistenceException, SQLException {
         return addNote(note.getIdea(), note.getChatId(), note.getNoteId());
     }
 
@@ -108,7 +108,7 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int editNote(String editedMessage, Long chatId, Long noteId) throws PersistenceException, SQLException {
+    public int editNote(String editedMessage, @Nullable Long chatId, @Nullable Long noteId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("UPDATE todolist_table SET idea = ? WHERE chatid = ? AND noteid = ?")) {
             int res;
             if (chatId != null && noteId != null) {
@@ -129,7 +129,7 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int editNote(Note note) throws PersistenceException, SQLException {
+    public int editNote(@NotNull Note note) throws PersistenceException, SQLException {
         return editNote(note.getIdea(), note.getChatId(), note.getNoteId());
     }
 

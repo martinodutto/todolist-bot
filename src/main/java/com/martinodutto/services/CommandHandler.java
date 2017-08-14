@@ -8,6 +8,7 @@ import com.martinodutto.types.Command;
 import com.martinodutto.utils.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.objects.Message;
@@ -31,7 +32,7 @@ public class CommandHandler implements InputHandler {
 
     @Nullable
     @Override
-    public String handleMessage(@org.jetbrains.annotations.NotNull Update update) {
+    public String handleMessage(@NotNull Update update) {
         String response;
         Message message = update.getMessage();
 
@@ -50,7 +51,7 @@ public class CommandHandler implements InputHandler {
                 case READ_LIST: {
                     try {
                         response = getNotesList(message.getChatId());
-                    } catch (@org.jetbrains.annotations.NotNull SQLException | PersistenceException e) {
+                    } catch (@NotNull SQLException | PersistenceException e) {
                         logger.error("Error while getting the todo list", e);
                         response = I18nSupport.i18nize("error.reading.list");
                     }
@@ -60,7 +61,7 @@ public class CommandHandler implements InputHandler {
                     try {
                         todoListDao.deleteTodoList(message.getChatId());
                         response = I18nSupport.i18nize("todo.list.successfully.deleted");
-                    } catch (@org.jetbrains.annotations.NotNull PersistenceException | SQLException e) {
+                    } catch (@NotNull PersistenceException | SQLException e) {
                         logger.error("Error while getting the notes list", e);
                         response = I18nSupport.i18nize("error.deleting.list");
                     }
@@ -77,7 +78,7 @@ public class CommandHandler implements InputHandler {
                         } else {
                             response = I18nSupport.i18nize("wrong.parameters");
                         }
-                    } catch (PersistenceException | SQLException e) {
+                    } catch (@NotNull PersistenceException | SQLException e) {
                         logger.error("Error while updating the note", e);
                         response = I18nSupport.i18nize("error.updating.note");
                     }
@@ -94,13 +95,14 @@ public class CommandHandler implements InputHandler {
         return response;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public String handleEditedMessage(Update update) {
         return I18nSupport.i18nize("cannot.edit.command");
     }
 
-    private Command getCommand(@org.jetbrains.annotations.NotNull Message message) throws UnknownCommandException {
+    @Nullable
+    private Command getCommand(@NotNull Message message) throws UnknownCommandException {
         Command command = null;
 
         if (message.getText().startsWith("/") && message.getText().length() > 1) {

@@ -1,5 +1,7 @@
 package com.martinodutto.services;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.text.MessageFormat;
@@ -19,7 +21,7 @@ public class I18nSupport {
      * @param key Key of the externalized string.
      * @return Translation for the string.
      */
-    public static String i18nize(@PropertyKey(resourceBundle = "Language") String key) {
+    public static String i18nize(@NotNull @PropertyKey(resourceBundle = "Language") String key) {
         return bundle.getString(key);
     }
 
@@ -30,7 +32,8 @@ public class I18nSupport {
      * @param params Parameters to be substituted into the resulting string.
      * @return Translation for the string, with the given parameters.
      */
-    public static String i18nize(@PropertyKey(resourceBundle = "Language") String key, Object... params) {
+    @NotNull
+    public static String i18nize(@NotNull @PropertyKey(resourceBundle = "Language") String key, @Nullable Object... params) {
         String value = bundle.getString(key);
 
         if (params != null && params.length > 0) return MessageFormat.format(value, params);

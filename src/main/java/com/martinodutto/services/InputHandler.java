@@ -1,5 +1,6 @@
 package com.martinodutto.services;
 
+import org.jetbrains.annotations.Nullable;
 import org.telegram.telegrambots.api.objects.Update;
 
 /**
@@ -13,7 +14,7 @@ public interface InputHandler {
      * @param update Object representing the user input.
      * @return Bot response for the input.
      */
-    String handleMessage(Update update);
+    @Nullable String handleMessage(Update update);
 
     /**
      * Takes a user-edited message, processes it and then returns a {@link String} that represents the bot response.

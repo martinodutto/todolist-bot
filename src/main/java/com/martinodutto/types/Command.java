@@ -11,6 +11,7 @@ public class Command {
 
     private Commands kindOf;
 
+    @NotNull
     private List<String> parameters = new ArrayList<>();
 
     public Command(Commands kindOf) {
@@ -25,6 +26,7 @@ public class Command {
         return kindOf;
     }
 
+    @NotNull
     public List<String> getParameters() {
         return parameters;
     }

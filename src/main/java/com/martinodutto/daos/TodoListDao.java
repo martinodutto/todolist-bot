@@ -3,6 +3,7 @@ package com.martinodutto.daos;
 import com.martinodutto.dtos.Note;
 import com.martinodutto.exceptions.PersistenceException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -32,5 +33,5 @@ public interface TodoListDao {
 
     int editNote(Note note) throws PersistenceException, SQLException;
 
-    Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException;
+    @Nullable Long getIdFromNumber(long noteNumber, Long chatId) throws PersistenceException, SQLException;
 }
