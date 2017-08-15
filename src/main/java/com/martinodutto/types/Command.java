@@ -7,12 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Represents a bot command, together with its optional parameters.
+ */
 public class Command {
 
     private Commands kindOf;
 
     @NotNull
-    private List<String> parameters = new ArrayList<>();
+    private final List<String> parameters = new ArrayList<>();
 
     public Command(Commands kindOf) {
         this.kindOf = kindOf;
@@ -45,7 +48,7 @@ public class Command {
 
         private String instruction;
 
-        private static HashMap<String, Commands> map;
+        private static final HashMap<String, Commands> map;
 
         static {
             map = new HashMap<>();
@@ -73,18 +76,18 @@ public class Command {
     }
 
     public boolean validateParameters() {
-        boolean valid = true;
+        boolean valid;
         switch (kindOf) {
             case EDIT: {
                 final List<String> parameters = getParameters();
 
-                valid &= (parameters.size() == 2);
+                valid = (parameters.size() == 2);
 
                 if (valid) {
                     try {
                         Long.parseLong(parameters.get(0));
                     } catch (NumberFormatException nfe) {
-                        valid &= false;
+                        valid = false;
                     }
                 }
 
@@ -93,20 +96,20 @@ public class Command {
             case DONE: {
                 final List<String> parameters = getParameters();
 
-                valid &= (parameters.size() == 1);
+                valid = (parameters.size() == 1);
 
                 if (valid) {
                     try {
                         Long.parseLong(parameters.get(0));
                     } catch (NumberFormatException nfe) {
-                        valid &= false;
+                        valid = false;
                     }
                 }
 
                 break;
             }
             default: {
-                valid &= true;
+                valid = true;
             }
         }
 

@@ -48,7 +48,7 @@ public class TodoListDaoImplTest {
 
     @Test
     public void addNoteTest() throws Exception {
-        assertEquals("Add note test", 1, todoListDao.addNote("message", 1L, 65l));
+        assertEquals("Add note test", 1, todoListDao.addNote("message", 1L, 65L));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class TodoListDaoImplTest {
         Long chatId = 101L;
         populateTestChat(chatId);
 
-        assertEquals("Normal use case", 24l, (long) todoListDao.getIdFromNumber(2, chatId));
+        assertEquals("Normal use case", 24L, (long) todoListDao.getIdFromNumber(2, chatId));
     }
 
     @Test
@@ -155,8 +155,8 @@ public class TodoListDaoImplTest {
     private List<Note> populateTestChat(Long chatId) throws SQLException, PersistenceException {
         final List<Note> notes = new ArrayList<>();
 
-        notes.add(new Note(chatId, 23l, "firstMessage"));
-        notes.add(new Note(chatId, 24l, "secondMessage"));
+        notes.add(new Note(chatId, 23L, "firstMessage"));
+        notes.add(new Note(chatId, 24L, "secondMessage"));
 
         int added = 0;
         for (Note note : notes) {

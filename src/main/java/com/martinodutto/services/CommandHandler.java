@@ -9,7 +9,6 @@ import com.martinodutto.utils.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -30,7 +29,6 @@ public class CommandHandler implements InputHandler {
         this.todoListDao = todoListDao;
     }
 
-    @Nullable
     @Override
     public String handleMessage(@NotNull Update update) {
         String response;
@@ -118,9 +116,9 @@ public class CommandHandler implements InputHandler {
         return I18nSupport.i18nize("cannot.edit.command");
     }
 
-    @Nullable
+    @NotNull
     private Command getCommand(@NotNull Message message) throws UnknownCommandException {
-        Command command = null;
+        Command command;
 
         if (message.getText().startsWith("/") && message.getText().length() > 1) {
             final String[] strings = StringTokenizer.translateCommandline(message.getText().substring(1));
@@ -129,6 +127,8 @@ public class CommandHandler implements InputHandler {
                 for (int j = 1; j < strings.length; j++) {
                     command.addParameter(strings[j]);
                 }
+            } else {
+                throw new UnknownCommandException();
             }
         } else {
             throw new UnknownCommandException();

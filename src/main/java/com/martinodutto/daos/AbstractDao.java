@@ -10,5 +10,5 @@ public abstract class AbstractDao {
     @Autowired
     protected DbManager dbManager;
 
-    protected Logger logger = LogManager.getLogger(this.getClass());
+    protected final Logger logger = LogManager.getLogger(this.getClass());
 }

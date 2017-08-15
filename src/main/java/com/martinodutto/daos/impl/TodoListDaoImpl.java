@@ -55,10 +55,10 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("INSERT INTO todolist_table (noteid, chatid, idea) VALUES (?, ?, ?)")) {
             int res;
             if (chatId != null && noteId != null) {
-                int idx = 1;
-                statement.setLong(idx++, noteId);
-                statement.setLong(idx++, chatId);
-                statement.setString(idx++, message);
+                int idx = 0;
+                statement.setLong(++idx, noteId);
+                statement.setLong(++idx, chatId);
+                statement.setString(++idx, message);
 
                 res = statement.executeUpdate();
 
@@ -112,10 +112,10 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("UPDATE todolist_table SET idea = ? WHERE chatid = ? AND noteid = ?")) {
             int res;
             if (chatId != null && noteId != null) {
-                int idx = 1;
-                statement.setString(idx++, editedMessage);
-                statement.setLong(idx++, chatId);
-                statement.setLong(idx++, noteId);
+                int idx = 0;
+                statement.setString(++idx, editedMessage);
+                statement.setLong(++idx, chatId);
+                statement.setLong(++idx, noteId);
 
                 res = statement.executeUpdate();
 
@@ -134,13 +134,13 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int deleteNote(Long chatId, Long noteId) throws PersistenceException, SQLException {
+    public int deleteNote(@Nullable Long chatId, @Nullable Long noteId) throws PersistenceException, SQLException {
         try (PreparedStatement statement = dbManager.getConnection().prepareStatement("DELETE FROM todolist_table WHERE chatid = ? AND noteid = ?")) {
             int res;
             if (chatId != null && noteId != null) {
-                int idx = 1;
-                statement.setLong(idx++, chatId);
-                statement.setLong(idx++, noteId);
+                int idx = 0;
+                statement.setLong(++idx, chatId);
+                statement.setLong(++idx, noteId);
 
                 res = statement.executeUpdate();
 
@@ -154,7 +154,7 @@ public class TodoListDaoImpl extends AbstractDao implements TodoListDao {
     }
 
     @Override
-    public int deleteNote(Note note) throws PersistenceException, SQLException {
+    public int deleteNote(@NotNull Note note) throws PersistenceException, SQLException {
         return deleteNote(note.getChatId(), note.getNoteId());
     }
 

@@ -3,6 +3,9 @@ package com.martinodutto.dtos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Object representing a todolist_table entity.
+ */
 public class Note {
 
     private Long chatId;

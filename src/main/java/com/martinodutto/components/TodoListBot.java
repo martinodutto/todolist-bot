@@ -26,13 +26,13 @@ public class TodoListBot extends TelegramLongPollingBot {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
-    private PropertiesManager propertiesManager;
+    private final PropertiesManager propertiesManager;
 
-    private TodoListDao todoListDao;
+    private final TodoListDao todoListDao;
 
-    private CommandHandler commandHandler;
+    private final CommandHandler commandHandler;
 
-    private UserMessageHandler userMessageHandler;
+    private final UserMessageHandler userMessageHandler;
 
     @Autowired
     public TodoListBot(PropertiesManager propertiesManager, TodoListDao todoListDao, CommandHandler commandHandler, UserMessageHandler userMessageHandler) {

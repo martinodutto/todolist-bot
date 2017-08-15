@@ -17,7 +17,7 @@ public interface TodoListDao {
     /**
      * @throws SQLException         SQL error occurred while vacuuming the database.
      * @throws PersistenceException Persistence exception while getting the connection.
-     * @see @link{https://www.sqlite.org/lang_vacuum.html}
+     * @see <a href="https://www.sqlite.org/lang_vacuum.html">https://www.sqlite.org/lang_vacuum.html</a>
      */
     void vacuum() throws SQLException, PersistenceException;
 
