@@ -1,5 +1,5 @@
 # todolist-bot
-A simple bot that lets you manage a todo-list.
+A simple bot that lets you manage a todo-list. Find me on Telegram as @DutToDoListBot.
 
 You can add a new todo-entry to your list by simply entering a message.
 
